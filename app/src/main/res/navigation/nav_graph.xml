@@ -9,7 +9,11 @@
         android:id="@+id/recorderPageFragment"
         android:name="it.uninsubria.pdm.rizzi.myaudio.RecorderPageFragment"
         android:label="fragment_recorder_page"
-        tools:layout="@layout/fragment_recorder_page" />
+        tools:layout="@layout/fragment_recorder_page" >
+        <action
+            android:id="@+id/action_recorderPageFragment_to_recordingListFragment"
+            app:destination="@id/recordingListFragment" />
+    </fragment>
     <fragment
         android:id="@+id/recordingListFragment"
         android:name="it.uninsubria.pdm.rizzi.myaudio.RecordingListFragment"
