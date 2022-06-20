@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-condensed"
-        android:text="Press the microphone button \n to start/stop the recording"
+        android:text="Press the recording button\nto start/stop the recording"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="24sp"
@@ -42,29 +42,34 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-light"
         android:textSize="48sp"
-        app:layout_constraintBottom_toTopOf="@id/iv_microphone"
+        app:layout_constraintBottom_toTopOf="@id/btn_rec"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_filename" />
 
-    <ImageView
-        android:id="@+id/iv_microphone"
+    <Button
+        android:id="@+id/btn_rec"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/ic_mic_off_foreground"
+        android:backgroundTint="@android:color/holo_blue_light"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:text="REC: OFF"
+        android:textColor="@android:color/black"
+        android:textSize="18dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chronometer"/>
+        app:layout_constraintTop_toBottomOf="@+id/chronometer" />
 
     <ImageView
-        android:id="@+id/iv_list"
+        android:id="@+id/iv_playlist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/ic_menu_foreground"
-        app:layout_constraintBottom_toBottomOf="@id/iv_microphone"
+        android:src="@drawable/ic_playlist_foreground"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_rec"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/iv_microphone"
-        app:layout_constraintTop_toTopOf="@id/iv_microphone" />
+        app:layout_constraintStart_toEndOf="@+id/btn_rec"
+        app:layout_constraintTop_toTopOf="@+id/btn_rec" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

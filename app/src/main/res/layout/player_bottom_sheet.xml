@@ -68,7 +68,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_audio_playing"
-        app:srcCompat="@drawable/ic_play_button" />
+        app:srcCompat="@drawable/ic_btn_play" />
 
     <ImageView
         android:id="@+id/iv_rewind_btn"
@@ -79,7 +79,7 @@
         app:layout_constraintEnd_toStartOf="@id/iv_play_btn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/iv_play_btn"
-        app:srcCompat="@drawable/ic_rewind_button" />
+        app:srcCompat="@drawable/ic_btn_rewind" />
 
     <ImageView
         android:id="@+id/iv_forward_btn"
@@ -90,7 +90,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/iv_play_btn"
         app:layout_constraintTop_toTopOf="@id/iv_play_btn"
-        app:srcCompat="@drawable/ic_forward_button" />
+        app:srcCompat="@drawable/ic_btn_forward" />
 
     <SeekBar
         android:id="@+id/seek_bar"

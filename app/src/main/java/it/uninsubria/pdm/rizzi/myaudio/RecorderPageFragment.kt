@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -44,8 +45,21 @@ class RecorderPageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val controller: NavController = Navigation.findNavController(view)
-        val list_btn: ImageView = iv_list
-        list_btn.setOnClickListener {
+        val rec_btn: Button = btn_rec
+        val list_img: ImageView = iv_playlist
+        var isRecording: Boolean = false
+        rec_btn.setOnClickListener {
+            if (isRecording) {
+                rec_btn.backgroundTintList = resources.getColorStateList(android.R.color.holo_blue_light, null)
+                rec_btn.text = "REC: OFF"
+                isRecording = false
+            } else {
+                rec_btn.backgroundTintList = resources.getColorStateList(android.R.color.holo_red_light, null)
+                rec_btn.text = "REC: ON"
+                isRecording = true
+            }
+        }
+        list_img.setOnClickListener {
             controller.navigate(R.id.action_recorderPageFragment_to_recordingListFragment)
         }
     }
