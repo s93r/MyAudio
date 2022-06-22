@@ -6,19 +6,21 @@ import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.os.Bundle
 import android.os.Environment
+import android.os.SystemClock
+import android.os.SystemClock.*
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_recorder_page.*
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -37,6 +39,9 @@ class RecorderPageFragment : Fragment() {
 
     private var recorder: MediaRecorder? = null
     //val recorder: MediaRecorder = MediaRecorder()
+
+    private var timer: Chronometer? = null
+    private var text: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +65,10 @@ class RecorderPageFragment : Fragment() {
 
         val rec_btn: Button = btn_rec
         val list_img: ImageView = iv_playlist
+        timer = chronometer
+        text = tv_filename
+
+
         var isRecording: Boolean = false
         rec_btn.setOnClickListener {
             if (isRecording) {
@@ -82,17 +91,28 @@ class RecorderPageFragment : Fragment() {
     }
 
     private fun stopRecording() {
+        timer?.stop()
+
+        text?.text = "Recording terminated. File saved to memory."
+
         recorder?.stop()
         recorder?.release()
     }
 
     private fun startRecording() {
+        timer?.base = SystemClock.elapsedRealtime()
+        timer?.start()
 
         val path = Environment.getExternalStorageDirectory().absolutePath
-        val file = "test3.mp3"
+        val formatter: SimpleDateFormat = SimpleDateFormat("yyyy_MM_dd_hh_mm_ss")
+
+        val file = "audio " + formatter.format(Date()) + ".3gp"
+
+        text?.text = "Recording started. File name: " + file
+
         recorder = MediaRecorder()
         recorder?.setAudioSource(MediaRecorder.AudioSource.MIC)
-        recorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+        recorder?.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
 
         recorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
         recorder?.setOutputFile(path+"/"+file)
