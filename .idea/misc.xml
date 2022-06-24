@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/silvi/AndroidStudioProjects/MyAudio/app/src/main/res/drawable/header_background.xml" value="0.2265" />
+        <entry key="..\:/Users/silvi/AndroidStudioProjects/MyAudio/app/src/main/res/drawable/ic_audio_track.xml" value="0.2265" />
         <entry key="..\:/Users/silvi/AndroidStudioProjects/MyAudio/app/src/main/res/drawable/ic_forward_button.xml" value="0.2265" />
         <entry key="..\:/Users/silvi/AndroidStudioProjects/MyAudio/app/src/main/res/drawable/ic_list_background.xml" value="0.2265" />
         <entry key="..\:/Users/silvi/AndroidStudioProjects/MyAudio/app/src/main/res/drawable/ic_list_foreground.xml" value="0.2265" />
@@ -19,6 +20,7 @@
         <entry key="..\:/Users/silvi/AndroidStudioProjects/MyAudio/app/src/main/res/layout/fragment_recording_list.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/silvi/AndroidStudioProjects/MyAudio/app/src/main/res/layout/player_bottom_sheet.xml" value="0.18432971014492755" />
         <entry key="..\:/Users/silvi/AndroidStudioProjects/MyAudio/app/src/main/res/layout/player_sheet.xml" value="0.22826086956521738" />
+        <entry key="..\:/Users/silvi/AndroidStudioProjects/MyAudio/app/src/main/res/layout/recording_list_item.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/silvi/AndroidStudioProjects/MyAudio/app/src/main/res/mipmap-anydpi-v26/ic_mic.xml" value="0.124" />
         <entry key="..\:/Users/silvi/AndroidStudioProjects/MyAudio/app/src/main/res/mipmap-anydpi-v26/ic_mic_off.xml" value="0.2265" />
       </map>

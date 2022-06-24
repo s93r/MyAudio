@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/iv_audio_track"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        app:srcCompat="@drawable/ic_audio_track"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_track_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-condensed-medium"
+        android:text="TextView"
+        android:textColor="@color/black"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toTopOf="@id/tv_last_modified"
+        app:layout_constraintStart_toEndOf="@id/iv_audio_track"
+        app:layout_constraintTop_toTopOf="@id/iv_audio_track" />
+
+    <TextView
+        android:id="@+id/tv_last_modified"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-condensed-light"
+        android:text="TextView"
+        android:textColor="@color/black"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_audio_track"
+        app:layout_constraintStart_toEndOf="@id/iv_audio_track"
+        app:layout_constraintTop_toBottomOf="@id/tv_track_name"
+        tools:layout_editor_absoluteX="94dp"
+        tools:layout_editor_absoluteY="62dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
