@@ -103,8 +103,8 @@ class RecorderPageFragment : Fragment() {
         timer?.base = SystemClock.elapsedRealtime()
         timer?.start()
 
-        val path = Environment.getExternalStorageDirectory().absolutePath
-        //val path = activity?.getExternalFilesDir(null)?.absolutePath
+        // val path = Environment.getExternalStorageDirectory().absolutePath
+        val path = activity?.getExternalFilesDir(null)?.absolutePath
         val formatter: SimpleDateFormat = SimpleDateFormat("yyyy_MM_dd_hh_mm_ss")
 
         val file = "audio " + formatter.format(Date()) + ".3gp"
