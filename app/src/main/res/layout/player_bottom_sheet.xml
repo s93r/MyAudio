@@ -7,7 +7,8 @@
     android:background="@drawable/player_background"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
     app:behavior_hideable="true"
-    app:behavior_peekHeight="60dp">
+    app:behavior_peekHeight="60dp"
+    android:id="@+id/audio_player_sheet">
 
     <LinearLayout
         android:id="@+id/header_layout"
