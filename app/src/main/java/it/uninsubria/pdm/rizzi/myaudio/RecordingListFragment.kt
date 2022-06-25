@@ -88,21 +88,61 @@ class RecordingListFragment : Fragment() {
                 //val str = allFiles.get(position).name
                 //Toast.makeText(context, "$position : $str",Toast.LENGTH_LONG).show()
 
+                myFile = allFiles.get(position)
+
                 if (isPlaying) {
                     stopAudio()
                     playAudio(myFile)
                 } else {
-                    myFile = allFiles.get(position)
                     playAudio(myFile)
+                }
+            }
+        })
 
+        btn_play?.setOnClickListener {
+            if (isPlaying) {
+                pauseAudio()
+            } else if (myFile != null) {
+                resumeAudio()
+            }
+        }
+/*
+        seekbar!!.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                if (myFile != null) {
+                    pauseAudio()
+                }
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                if (myFile != null) {
+                    val progress = seekBar?.progress
+                    progress?.let { media?.seekTo(it) }
+                    resumeAudio()
                 }
 
             }
 
         })
 
+ */
 
+    }
 
+    private fun pauseAudio() {
+        media?.pause()
+        btn_play?.setImageDrawable(activity?.resources?.getDrawable(R.drawable.ic_btn_play, null))
+        isPlaying = false
+    }
+
+    private fun resumeAudio() {
+        media?.start()
+        btn_play?.setImageDrawable(activity?.resources?.getDrawable(R.drawable.ic_btn_pause, null))
+        isPlaying = true
     }
 
     private fun stopAudio() {
