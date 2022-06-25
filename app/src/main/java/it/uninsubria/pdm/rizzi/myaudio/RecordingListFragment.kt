@@ -1,14 +1,22 @@
 package it.uninsubria.pdm.rizzi.myaudio
 
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.SeekBar
+import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_recording_list.*
+import kotlinx.android.synthetic.main.player_bottom_sheet.*
 import java.io.File
+import java.io.IOException
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -26,6 +34,18 @@ class RecordingListFragment : Fragment() {
     private var param2: String? = null
 
     private var list_view: RecyclerView? = null
+
+    private var media: MediaPlayer? = null
+    private var isPlaying: Boolean = false
+    private var myFile: File? = null
+
+    private var btn_play: ImageView? = null
+    private var txt_status: TextView? = null
+    private var txt_name: TextView? = null
+
+    private var seekbar: SeekBar? = null
+    private var seekbarHandler: Handler? = null
+    private var seekbarRunnable: Runnable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +68,12 @@ class RecordingListFragment : Fragment() {
 
         list_view = rv_recording_list
 
+        btn_play = iv_play_btn
+        txt_status = tv_player_status
+        txt_name = tv_audio_playing
+
+        seekbar = seek_bar
+
         val path = activity?.getExternalFilesDir(null)?.absolutePath
         val directory = File(path)
         val allFiles = (directory.listFiles())
@@ -56,6 +82,62 @@ class RecordingListFragment : Fragment() {
         list_view?.setHasFixedSize(true)
         list_view?.layoutManager = LinearLayoutManager(context)
         list_view?.adapter = myAdapter
+
+        myAdapter.setOnItemClickListener(object : RecordingRecyclerAdapter.onItemClickListener {
+            override fun onItemClick(position: Int) {
+                //val str = allFiles.get(position).name
+                //Toast.makeText(context, "$position : $str",Toast.LENGTH_LONG).show()
+
+                if (isPlaying) {
+                    stopAudio()
+                    playAudio(myFile)
+                } else {
+                    myFile = allFiles.get(position)
+                    playAudio(myFile)
+
+                }
+
+            }
+
+        })
+
+
+
+    }
+
+    private fun stopAudio() {
+
+        btn_play?.setImageDrawable(activity?.resources?.getDrawable(R.drawable.ic_btn_play, null))
+        txt_status?.text = "Playing"
+
+        isPlaying = false
+        media?.stop()
+    }
+
+    private fun playAudio(myFile: File?) {
+
+        media = MediaPlayer()
+
+
+
+        try {
+            media!!.setDataSource(myFile?.absolutePath)
+            media!!.prepare()
+            media!!.start()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        btn_play?.setImageDrawable(activity?.resources?.getDrawable(R.drawable.ic_btn_pause, null))
+        txt_name?.text = myFile?.name
+        txt_status?.text = "Playing"
+
+        isPlaying = true
+
+        media?.setOnCompletionListener {
+            stopAudio()
+            txt_status?.text = "Finished"
+        }
 
     }
 
