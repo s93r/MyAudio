@@ -11,6 +11,7 @@ import java.io.File
 
 class RecordingRecyclerAdapter(var allFiles: Array<File>?) : RecyclerView.Adapter<RecordingRecyclerAdapter.RecordingViewHolder>() {
 
+    val time = CreationTime()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecordingViewHolder {
         return RecordingViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.recording_list_item, parent,false))
@@ -18,7 +19,7 @@ class RecordingRecyclerAdapter(var allFiles: Array<File>?) : RecyclerView.Adapte
 
     override fun onBindViewHolder(holder: RecordingViewHolder, position: Int) {
         holder.name.text = allFiles?.get(position)?.name
-        holder.time.text = allFiles?.get(position)?.lastModified().toString()
+        holder.time.text = allFiles?.get(position)?.lastModified()?.let { time.timeOfCreation(it) }
     }
 
     override fun getItemCount(): Int {
