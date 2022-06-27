@@ -1,6 +1,10 @@
 package it.uninsubria.pdm.rizzi.myaudio
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import androidx.fragment.app.Fragment
@@ -11,6 +15,9 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.core.net.toFile
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_recording_list.*
@@ -72,6 +79,7 @@ class RecordingListFragment : Fragment() {
         txt_status = tv_player_status
         txt_name = tv_audio_playing
 
+
         seekbar = seek_bar
 
         val path = activity?.getExternalFilesDir(null)?.absolutePath
@@ -96,6 +104,24 @@ class RecordingListFragment : Fragment() {
                 } else {
                     playAudio(myFile)
                 }
+
+                //
+                val btn_share = iv_share_btn
+                btn_share.setOnClickListener {
+                    if (ContextCompat.checkSelfPermission(context!!, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                        ContextCompat.checkSelfPermission(context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                        //val uri = Uri.parse(myFile.toString())
+                        val path = FileProvider.getUriForFile(context!!, "it.uninsubria.pdm.rizzi.myaudio.fileprovider", myFile!!)
+                        val intent = Intent()
+                        intent.action = Intent.ACTION_SEND
+                        intent.putExtra(Intent.EXTRA_STREAM, path)
+                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        intent.type = "audio/3gpp"
+                        startActivity(Intent.createChooser(intent,"share audio file"))
+                    }
+                }
+                //
+
             }
         })
 
@@ -106,6 +132,9 @@ class RecordingListFragment : Fragment() {
                 resumeAudio()
             }
         }
+
+
+
 /*
         seekbar!!.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
