@@ -1,20 +1,20 @@
 package it.uninsubria.pdm.rizzi.myaudio
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.os.Bundle
-import android.os.Environment
 import android.os.SystemClock
-import android.os.SystemClock.*
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.Chronometer
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import kotlinx.android.synthetic.main.fragment_recorder_page.*
@@ -37,11 +37,18 @@ class RecorderPageFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
-    private var recorder: MediaRecorder? = null
-    //val recorder: MediaRecorder = MediaRecorder()
+    // Declare GUI variables
+    private lateinit var filenameTextView: TextView
+    private lateinit var tracklistImageView: ImageView
+    private lateinit var recorderButton: Button
+    private lateinit var timeChronometer: Chronometer
 
-    private var timer: Chronometer? = null
-    private var text: TextView? = null
+    // Declare non-GUI variables
+    private lateinit var mediaRecorder: MediaRecorder
+    private lateinit var navController: NavController
+
+    // Other variables
+    private var isRecording: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,57 +58,57 @@ class RecorderPageFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_recorder_page, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val controller: NavController = Navigation.findNavController(view)
 
-        val rec_btn: Button = btn_rec
-        val list_img: ImageView = iv_playlist
-        timer = chronometer
-        text = tv_filename
+        // Initialise GUI elements
+        filenameTextView = tv_filename
+        recorderButton = btn_rec
+        timeChronometer = chronometer
+        tracklistImageView = iv_playlist
 
+        // Initialise non-GUI elements
+        navController = Navigation.findNavController(view)
 
-        var isRecording: Boolean = false
-        rec_btn.setOnClickListener {
+        // Implement OnClickListener interface
+        recorderButton.setOnClickListener {
             if (isRecording) {
                 stopRecording()
-                rec_btn.backgroundTintList = resources.getColorStateList(android.R.color.holo_blue_light, null)
-                rec_btn.text = "REC: OFF"
+                recorderButton.backgroundTintList = resources.getColorStateList(android.R.color.holo_blue_light, null)
+                recorderButton.text = "REC: OFF"
                 isRecording = false
             } else {
                 if (hasPermission()) {
                     startRecording()
-                    rec_btn.backgroundTintList = resources.getColorStateList(android.R.color.holo_red_light, null)
-                    rec_btn.text = "REC: ON"
+                    recorderButton.backgroundTintList = resources.getColorStateList(android.R.color.holo_red_light, null)
+                    recorderButton.text = "REC: ON"
                     isRecording = true
                 }
             }
         }
-        list_img.setOnClickListener {
-            controller.navigate(R.id.action_recorderPageFragment_to_recordingListFragment)
+
+        tracklistImageView.setOnClickListener {
+            navController.navigate(R.id.action_recorderPageFragment_to_recordingListFragment)
         }
     }
 
     private fun stopRecording() {
-        timer?.stop()
+        timeChronometer.stop()
 
-        text?.text = "Recording terminated. File saved to memory."
+        filenameTextView.text = "Recording terminated. File saved to memory."
 
-        recorder?.stop()
-        recorder?.release()
+        mediaRecorder.stop()
+        mediaRecorder.release()
     }
 
     private fun startRecording() {
-        timer?.base = SystemClock.elapsedRealtime()
-        timer?.start()
+        timeChronometer.base = SystemClock.elapsedRealtime()
+        timeChronometer.start()
 
         // val path = Environment.getExternalStorageDirectory().absolutePath
         val path = activity?.getExternalFilesDir(null)?.absolutePath
@@ -109,17 +116,17 @@ class RecorderPageFragment : Fragment() {
 
         val file = "audio " + formatter.format(Date()) + ".3gp"
 
-        text?.text = "Recording started. File name: " + file
+        filenameTextView.text = "Recording started. File name: " + file
 
-        recorder = MediaRecorder()
-        recorder?.setAudioSource(MediaRecorder.AudioSource.MIC)
-        recorder?.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-        recorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-        recorder?.setOutputFile(path+"/"+file)
+        mediaRecorder = MediaRecorder()
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+        mediaRecorder.setOutputFile(path+"/"+file)
 
         try {
-            recorder?.prepare()
-            recorder?.start()
+            mediaRecorder.prepare()
+            mediaRecorder.start()
         } catch (e: IllegalStateException) {
             e.printStackTrace()
         } catch (e: IOException) {
