@@ -7,8 +7,7 @@
     android:background="@drawable/player_background"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
     app:behavior_hideable="true"
-    app:behavior_peekHeight="60dp"
-    android:id="@+id/audio_player_sheet">
+    app:behavior_peekHeight="60dp">
 
     <LinearLayout
         android:id="@+id/header_layout"
@@ -21,7 +20,6 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/tv_player_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -72,7 +70,6 @@
         app:srcCompat="@drawable/ic_btn_play" />
 
     <ImageView
-        android:id="@+id/iv_rewind_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="8dp"
@@ -83,7 +80,6 @@
         app:srcCompat="@drawable/ic_btn_rewind" />
 
     <ImageView
-        android:id="@+id/iv_forward_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="8dp"

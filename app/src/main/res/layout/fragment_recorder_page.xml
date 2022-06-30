@@ -9,67 +9,78 @@
     <!-- TODO: Update blank fragment layout -->
 
     <TextView
-        android:id="@+id/tv_instructions"
+        android:id="@+id/info_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-condensed"
+        android:fontFamily="sans-serif-medium"
         android:text="Press the recording button\nto start/stop the recording"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/tv_filename"
+        app:layout_constraintBottom_toTopOf="@id/filename_text_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tv_filename"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-condensed-light"
-        android:text="The name of the recorded file \n will be displayed here"
-        android:textAlignment="center"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@id/chronometer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_instructions" />
-
-    <Chronometer
-        android:id="@+id/chronometer"
+        android:id="@+id/filename_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-light"
-        android:textSize="48sp"
-        app:layout_constraintBottom_toTopOf="@id/btn_rec"
+        android:text="The name of the recorded file \n will be displayed here"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@id/timer_chronometer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_filename" />
+        app:layout_constraintTop_toBottomOf="@id/info_text_view" />
 
-    <Button
-        android:id="@+id/btn_rec"
+    <Chronometer
+        android:id="@+id/timer_chronometer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@android:color/holo_blue_light"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:text="REC: OFF"
-        android:textColor="@android:color/black"
-        android:textSize="18dp"
+        android:fontFamily="sans-serif"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="48sp"
+        app:layout_constraintBottom_toTopOf="@id/recorder_button_image_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/filename_text_view" />
+
+    <ImageView
+        android:id="@+id/tracklist_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_btn_tracklist"
+        app:layout_constraintBottom_toBottomOf="@id/recorder_button_image_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/recorder_button_image_view"
+        app:layout_constraintTop_toTopOf="@id/recorder_button_image_view" />
+
+    <ImageView
+        android:id="@+id/recorder_button_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_btn_record"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chronometer" />
+        app:layout_constraintTop_toBottomOf="@id/timer_chronometer" />
 
-    <ImageView
-        android:id="@+id/iv_playlist"
+    <TextView
+        android:id="@+id/recorder_status_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_playlist_foreground"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_rec"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_rec"
-        app:layout_constraintTop_toTopOf="@+id/btn_rec" />
+        android:fontFamily="sans-serif"
+        android:text="Recorder Status: OFF"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/recorder_button_image_view"
+        app:layout_constraintStart_toStartOf="@id/recorder_button_image_view"
+        app:layout_constraintTop_toBottomOf="@id/recorder_button_image_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

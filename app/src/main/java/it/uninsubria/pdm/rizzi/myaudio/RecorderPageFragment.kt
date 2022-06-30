@@ -39,9 +39,10 @@ class RecorderPageFragment : Fragment() {
 
     // Declare GUI variables
     private lateinit var filenameTextView: TextView
+    private lateinit var timerChronometer: Chronometer
+    private lateinit var recorderButtonImageView: ImageView
+    private lateinit var recorderStatusTextView: TextView
     private lateinit var tracklistImageView: ImageView
-    private lateinit var recorderButton: Button
-    private lateinit var timeChronometer: Chronometer
 
     // Declare non-GUI variables
     private lateinit var mediaRecorder: MediaRecorder
@@ -49,6 +50,8 @@ class RecorderPageFragment : Fragment() {
 
     // Other variables
     private var isRecording: Boolean = false
+    private var recordingPermission: String = Manifest.permission.RECORD_AUDIO
+    private var writingPermission: String = Manifest.permission.WRITE_EXTERNAL_STORAGE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,28 +70,31 @@ class RecorderPageFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Initialise GUI elements
-        filenameTextView = tv_filename
-        recorderButton = btn_rec
-        timeChronometer = chronometer
-        tracklistImageView = iv_playlist
+        filenameTextView = filename_text_view
+        recorderButtonImageView = recorder_button_image_view
+        recorderStatusTextView = recorder_status_text_view
+        timerChronometer = timer_chronometer
+        tracklistImageView = tracklist_image_view
 
         // Initialise non-GUI elements
         navController = Navigation.findNavController(view)
 
         // Implement OnClickListener interface
-        recorderButton.setOnClickListener {
-            if (isRecording) {
-                stopRecording()
-                recorderButton.backgroundTintList = resources.getColorStateList(android.R.color.holo_blue_light, null)
-                recorderButton.text = "REC: OFF"
-                isRecording = false
-            } else {
-                if (hasPermission()) {
+        recorderButtonImageView.setOnClickListener {
+            if (checkPermission()) {
+                if (isRecording) {
+                    stopRecording()
+                    recorderButtonImageView.drawable.setTintList(resources.getColorStateList(android.R.color.black, null))
+                    recorderStatusTextView.text = "Recorder Status: OFF"
+                    isRecording = false
+                } else {
                     startRecording()
-                    recorderButton.backgroundTintList = resources.getColorStateList(android.R.color.holo_red_light, null)
-                    recorderButton.text = "REC: ON"
+                    recorderButtonImageView.drawable.setTintList(resources.getColorStateList(android.R.color.holo_red_dark, null))
+                    recorderStatusTextView.text = "Recorder Status: ON"
                     isRecording = true
                 }
+            } else {
+                requestPermission()
             }
         }
 
@@ -97,8 +103,16 @@ class RecorderPageFragment : Fragment() {
         }
     }
 
+    private fun checkPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(context!!, recordingPermission) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context!!, writingPermission) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestPermission() {
+        ActivityCompat.requestPermissions(activity!!, arrayOf(recordingPermission, writingPermission),0)
+    }
+
     private fun stopRecording() {
-        timeChronometer.stop()
+        timerChronometer.stop()
 
         filenameTextView.text = "Recording terminated. File saved to memory."
 
@@ -107,8 +121,8 @@ class RecorderPageFragment : Fragment() {
     }
 
     private fun startRecording() {
-        timeChronometer.base = SystemClock.elapsedRealtime()
-        timeChronometer.start()
+        timerChronometer.base = SystemClock.elapsedRealtime()
+        timerChronometer.start()
 
         // val path = Environment.getExternalStorageDirectory().absolutePath
         val path = activity?.getExternalFilesDir(null)?.absolutePath
@@ -133,18 +147,6 @@ class RecorderPageFragment : Fragment() {
             e.printStackTrace()
         }
 
-    }
-
-    private fun hasPermission(): Boolean {
-        if (ContextCompat.checkSelfPermission(context!!, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            return true
-        } else {
-            val permissions = arrayOf(android.Manifest.permission.RECORD_AUDIO, android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE)
-            ActivityCompat.requestPermissions(activity!!, permissions,0)
-            //ActivityCompat.requestPermissions(activity!!, arrayOf(Manifest.permission.RECORD_AUDIO), 17)
-            return false
-        }
     }
 
     companion object {
