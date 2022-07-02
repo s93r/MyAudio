@@ -8,10 +8,7 @@ import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.Chronometer
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -41,15 +38,17 @@ class RecorderPageFragment : Fragment() {
     private lateinit var filenameTextView: TextView
     private lateinit var timerChronometer: Chronometer
     private lateinit var recorderButtonImageView: ImageView
-    private lateinit var recorderStatusTextView: TextView
     private lateinit var tracklistImageView: ImageView
 
     // Declare non-GUI variables
     private lateinit var mediaRecorder: MediaRecorder
+    private lateinit var myAudioTrackName: String
+    private lateinit var myAudioTrackPath: String
     private lateinit var navController: NavController
 
     // Other variables
     private var isRecording: Boolean = false
+    private var myFileFormat: SimpleDateFormat = SimpleDateFormat("yyyy_MM_dd_hh_mm_ss")
     private var recordingPermission: String = Manifest.permission.RECORD_AUDIO
     private var writingPermission: String = Manifest.permission.WRITE_EXTERNAL_STORAGE
 
@@ -68,36 +67,29 @@ class RecorderPageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         // Initialise GUI elements
         filenameTextView = filename_text_view
         recorderButtonImageView = recorder_button_image_view
-        recorderStatusTextView = recorder_status_text_view
         timerChronometer = timer_chronometer
         tracklistImageView = tracklist_image_view
-
         // Initialise non-GUI elements
         navController = Navigation.findNavController(view)
-
         // Implement OnClickListener interface
         recorderButtonImageView.setOnClickListener {
             if (checkPermission()) {
                 if (isRecording) {
                     stopRecording()
                     recorderButtonImageView.drawable.setTintList(resources.getColorStateList(android.R.color.black, null))
-                    recorderStatusTextView.text = "Recorder Status: OFF"
                     isRecording = false
                 } else {
                     startRecording()
                     recorderButtonImageView.drawable.setTintList(resources.getColorStateList(android.R.color.holo_red_dark, null))
-                    recorderStatusTextView.text = "Recorder Status: ON"
                     isRecording = true
                 }
             } else {
                 requestPermission()
             }
         }
-
         tracklistImageView.setOnClickListener {
             navController.navigate(R.id.action_recorderPageFragment_to_recordingListFragment)
         }
@@ -112,32 +104,33 @@ class RecorderPageFragment : Fragment() {
     }
 
     private fun stopRecording() {
+        // Stop the chronometer
         timerChronometer.stop()
-
-        filenameTextView.text = "Recording terminated. File saved to memory."
-
+        // Stop the media recorder
         mediaRecorder.stop()
         mediaRecorder.release()
+        // Update recording information
+        filenameTextView.text = "Your recording has been successfully saved to memory"
+        Toast.makeText(context, "Recording terminated.", Toast.LENGTH_SHORT).show()
     }
 
     private fun startRecording() {
+        // Start the chronometer
         timerChronometer.base = SystemClock.elapsedRealtime()
         timerChronometer.start()
-
-        // val path = Environment.getExternalStorageDirectory().absolutePath
-        val path = activity?.getExternalFilesDir(null)?.absolutePath
-        val formatter: SimpleDateFormat = SimpleDateFormat("yyyy_MM_dd_hh_mm_ss")
-
-        val file = "audio " + formatter.format(Date()) + ".3gp"
-
-        filenameTextView.text = "Recording started. File name: " + file
-
+        // Retrieve audio track file information
+        myAudioTrackPath = activity!!.getExternalFilesDir(null)!!.absolutePath
+        myAudioTrackName = "memo_${myFileFormat.format(Date())}.3gp"
+        // Update recording information
+        filenameTextView.text = "Your recording has been successfully started"
+        Toast.makeText(context, "Recording started.", Toast.LENGTH_SHORT).show()
+        // Initialise the media recorder
         mediaRecorder = MediaRecorder()
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-        mediaRecorder.setOutputFile(path+"/"+file)
-
+        mediaRecorder.setOutputFile("$myAudioTrackPath/$myAudioTrackName")
+        // Start the media recorder
         try {
             mediaRecorder.prepare()
             mediaRecorder.start()
@@ -146,7 +139,6 @@ class RecorderPageFragment : Fragment() {
         } catch (e: IOException) {
             e.printStackTrace()
         }
-
     }
 
     companion object {

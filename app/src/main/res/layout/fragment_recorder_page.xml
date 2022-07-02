@@ -69,18 +69,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/timer_chronometer" />
 
-    <TextView
-        android:id="@+id/recorder_status_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif"
-        android:text="Recorder Status: OFF"
-        android:textAlignment="center"
-        android:textColor="@color/black"
-        android:textSize="18dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/recorder_button_image_view"
-        app:layout_constraintStart_toStartOf="@id/recorder_button_image_view"
-        app:layout_constraintTop_toBottomOf="@id/recorder_button_image_view" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
