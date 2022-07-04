@@ -4,24 +4,24 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaPlayer
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
-import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.core.net.toFile
+import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_recording_list.*
 import kotlinx.android.synthetic.main.player_bottom_sheet.*
+import kotlinx.android.synthetic.main.recording_list_item.*
 import java.io.File
 import java.io.IOException
 
@@ -40,15 +40,27 @@ class RecordingListFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
-    private var list_view: RecyclerView? = null
+    // Declare GUI variables
+    private lateinit var btnPlayImageView: ImageView
+    private lateinit var listRecyclerView: RecyclerView
+    private lateinit var listRecyclerViewAdapter: RecordingRecyclerAdapter
+    private lateinit var tracknameTextView: TextView
+    private lateinit var trackstatusTextView: TextView
 
-    private var media: MediaPlayer? = null
+    // Declare non-GUI variables
+    private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var myAudioTrack: File
+    private lateinit var myAudioTrackList: Array<File>
+    private lateinit var myAudioTrackPath: String
+
+    // Other variables
     private var isPlaying: Boolean = false
-    private var myFile: File? = null
 
-    private var btn_play: ImageView? = null
-    private var txt_status: TextView? = null
-    private var txt_name: TextView? = null
+
+
+    private lateinit var pause: ImageView
+    private lateinit var stop: ImageView
+
 
     private var seekbar: SeekBar? = null
     private var seekbarHandler: Handler? = null
@@ -62,56 +74,55 @@ class RecordingListFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_recording_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Initialise GUI variables
+        btnPlayImageView = play_button_image_view
+        listRecyclerView = list_recycler_view
+        tracknameTextView = track_name_text_view
+        trackstatusTextView = track_status_text_view
 
-        list_view = rv_recording_list
-
-        btn_play = iv_play_btn
-        txt_status = tv_player_status
-        txt_name = tv_audio_playing
+        pause = pause_button_image_view
+        stop = stop_button_image_view
 
 
         seekbar = seek_bar
 
-        val path = activity?.getExternalFilesDir(null)?.absolutePath
-        val directory = File(path)
-        val allFiles = (directory.listFiles())
-
-        val myAdapter = RecordingRecyclerAdapter(allFiles)
-        list_view?.setHasFixedSize(true)
-        list_view?.layoutManager = LinearLayoutManager(context)
-        list_view?.adapter = myAdapter
-
-        myAdapter.setOnItemClickListener(object : RecordingRecyclerAdapter.onItemClickListener {
+        // Retrieve audio track file information
+        myAudioTrackPath = activity!!.getExternalFilesDir(null)!!.absolutePath
+        myAudioTrackList = File(myAudioTrackPath).listFiles() as Array<File>
+        // Initialise the recycler view and its personalised adapter
+        listRecyclerViewAdapter = RecordingRecyclerAdapter(myAudioTrackList)
+        listRecyclerView.setHasFixedSize(true)
+        listRecyclerView.layoutManager = LinearLayoutManager(context)
+        listRecyclerView.adapter = listRecyclerViewAdapter
+        // Implement OnItemClickListener interface
+        listRecyclerViewAdapter.setOnItemClickListener(object : RecordingRecyclerAdapter.onItemClickListener {
             override fun onItemClick(position: Int) {
-                //val str = allFiles.get(position).name
-                //Toast.makeText(context, "$position : $str",Toast.LENGTH_LONG).show()
-
-                myFile = allFiles.get(position)
-
+                myAudioTrack = myAudioTrackList[position]
+                /*
                 if (isPlaying) {
                     stopAudio()
-                    playAudio(myFile)
+                    playAudio(myAudioTrack)
                 } else {
-                    playAudio(myFile)
+                    playAudio(myAudioTrack)
                 }
+                
+                 */
+                controlSound(myAudioTrack)
 
                 //
-                val btn_share = iv_share_btn
+                val btn_share = share_button_image_view
                 btn_share.setOnClickListener {
                     if (ContextCompat.checkSelfPermission(context!!, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
                         ContextCompat.checkSelfPermission(context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                         //val uri = Uri.parse(myFile.toString())
-                        val path = FileProvider.getUriForFile(context!!, "it.uninsubria.pdm.rizzi.myaudio.fileprovider", myFile!!)
+                        val path = FileProvider.getUriForFile(context!!, "it.uninsubria.pdm.rizzi.myaudio.fileprovider", myAudioTrack!!)
                         val intent = Intent()
                         intent.action = Intent.ACTION_SEND
                         intent.putExtra(Intent.EXTRA_STREAM, path)
@@ -125,89 +136,146 @@ class RecordingListFragment : Fragment() {
             }
         })
 
-        btn_play?.setOnClickListener {
+        /*
+        btnPlayImageView.setOnClickListener {
             if (isPlaying) {
                 pauseAudio()
-            } else if (myFile != null) {
+            } else if (myAudioTrack != null) {
                 resumeAudio()
             }
         }
 
+         */
 
 
-/*
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+
+
+    private fun controlSound(myAudioTrack: File) {
+        mediaPlayer = MediaPlayer.create(context, myAudioTrack.toUri())
+        tracknameTextView.text = myAudioTrack.name
+        initialiseSeekBar()
+        btnPlayImageView.setOnClickListener {
+            mediaPlayer.start()
+        }
+        pause.setOnClickListener {
+            mediaPlayer.pause()
+        }
+        stop.setOnClickListener {
+            mediaPlayer.stop()
+            //mediaPlayer.reset()
+            //mediaPlayer.release()
+
+        }
+
         seekbar!!.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                TODO("Not yet implemented")
+                if (fromUser)
+                    mediaPlayer.seekTo(progress)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                /*
                 if (myFile != null) {
                     pauseAudio()
                 }
+
+                 */
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                /*
                 if (myFile != null) {
                     val progress = seekBar?.progress
                     progress?.let { media?.seekTo(it) }
                     resumeAudio()
                 }
 
+                 */
             }
 
         })
 
- */
-
     }
 
+
+
+/*
     private fun pauseAudio() {
-        media?.pause()
-        btn_play?.setImageDrawable(activity?.resources?.getDrawable(R.drawable.ic_btn_play, null))
+        mediaPlayer.pause()
+        btnPlayImageView.setImageDrawable(activity?.resources?.getDrawable(R.drawable.ic_btn_play, null))
         isPlaying = false
     }
 
     private fun resumeAudio() {
-        media?.start()
-        btn_play?.setImageDrawable(activity?.resources?.getDrawable(R.drawable.ic_btn_pause, null))
+        mediaPlayer.start()
+        btnPlayImageView.setImageDrawable(activity?.resources?.getDrawable(R.drawable.ic_btn_pause, null))
         isPlaying = true
     }
 
     private fun stopAudio() {
 
-        btn_play?.setImageDrawable(activity?.resources?.getDrawable(R.drawable.ic_btn_play, null))
-        txt_status?.text = "Playing"
+        btnPlayImageView.setImageDrawable(activity?.resources?.getDrawable(R.drawable.ic_btn_play, null))
+        trackstatusTextView.text = "Playing"
 
         isPlaying = false
-        media?.stop()
+        mediaPlayer.stop()
     }
 
-    private fun playAudio(myFile: File?) {
+    private fun playAudio(file: File?) {
 
-        media = MediaPlayer()
+        mediaPlayer = MediaPlayer()
+
+        //initialiseSeekBar()
 
 
 
         try {
-            media!!.setDataSource(myFile?.absolutePath)
-            media!!.prepare()
-            media!!.start()
+            mediaPlayer.setDataSource(file?.absolutePath)
+            mediaPlayer.prepare()
+            mediaPlayer.start()
         } catch (e: IOException) {
             e.printStackTrace()
         }
 
-        btn_play?.setImageDrawable(activity?.resources?.getDrawable(R.drawable.ic_btn_pause, null))
-        txt_name?.text = myFile?.name
-        txt_status?.text = "Playing"
+        btnPlayImageView.setImageDrawable(activity?.resources?.getDrawable(R.drawable.ic_btn_pause, null))
+        tracknameTextView.text = file?.name
+        trackstatusTextView.text = "Playing"
 
         isPlaying = true
 
-        media?.setOnCompletionListener {
+        mediaPlayer.setOnCompletionListener {
             stopAudio()
-            txt_status?.text = "Finished"
+            trackstatusTextView.text = "Finished"
         }
 
+    }
+
+ */
+
+    private fun initialiseSeekBar() {
+        seekbar?.max = mediaPlayer!!.duration
+        val handler = Handler()
+        handler.postDelayed(object : Runnable{
+            override fun run() {
+                seekbar?.progress = mediaPlayer!!.currentPosition
+                handler.postDelayed(this, 1000)
+
+            }
+
+        }, 0)
     }
 
     companion object {
