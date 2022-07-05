@@ -97,7 +97,7 @@ class RecordingListFragment : Fragment() {
         listRecyclerView.layoutManager = LinearLayoutManager(context)
         listRecyclerView.adapter = listRecyclerViewAdapter
         // Implement OnItemClickListener interface
-        listRecyclerViewAdapter.setOnItemClickListener(object: RecordingRecyclerAdapter.onItemClickListener {
+        listRecyclerViewAdapter.setOnItemClickListener(object: RecordingRecyclerAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 // Prepare the media player and its seekbar
                 myAudioTrack = myAudioTrackList[position]

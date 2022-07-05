@@ -11,20 +11,20 @@ import java.io.File
 
 class RecordingRecyclerAdapter(var allFiles: Array<File>?) : RecyclerView.Adapter<RecordingRecyclerAdapter.RecordingViewHolder>() {
 
-    private lateinit var myListener: onItemClickListener
+    private lateinit var myListener: OnItemClickListener
 
-    interface onItemClickListener {
+    private var time = CreationTime()
+
+    interface OnItemClickListener {
         fun onItemClick(position: Int)
     }
 
-    fun setOnItemClickListener(listener: onItemClickListener) {
+    fun setOnItemClickListener(listener: OnItemClickListener) {
         myListener = listener
     }
-    
-    val time = CreationTime()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecordingViewHolder {
-        return RecordingViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.recording_list_item, parent,false), myListener)
+        return RecordingViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.recording_list_item, parent, false), myListener)
     }
 
     override fun onBindViewHolder(holder: RecordingViewHolder, position: Int) {
@@ -33,11 +33,10 @@ class RecordingRecyclerAdapter(var allFiles: Array<File>?) : RecyclerView.Adapte
     }
 
     override fun getItemCount(): Int {
-
         return allFiles!!.size
     }
 
-    class RecordingViewHolder(itemView: View, listener: onItemClickListener) : RecyclerView.ViewHolder(itemView) {
+    class RecordingViewHolder(itemView: View, listener: OnItemClickListener) : RecyclerView.ViewHolder(itemView) {
 
         val image: ImageView = itemView.iv_audio_track
         val name: TextView = itemView.tv_track_name
@@ -48,6 +47,5 @@ class RecordingRecyclerAdapter(var allFiles: Array<File>?) : RecyclerView.Adapte
                 listener.onItemClick(adapterPosition)
             }
         }
-
     }
 }
