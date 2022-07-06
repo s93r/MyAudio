@@ -38,7 +38,7 @@
             android:layout_weight="1"
             android:fontFamily="sans-serif-condensed-medium"
             android:padding="16dp"
-            android:text="Not playing"
+            android:text="TRACK STATUS"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="20dp" />
