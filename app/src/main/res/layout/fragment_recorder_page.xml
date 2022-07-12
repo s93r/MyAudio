@@ -27,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-light"
-        android:text="The name of the recorded file \n will be displayed here"
+        android:text="Recording information\n will be displayed here"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="18sp"
